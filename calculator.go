@@ -18,6 +18,8 @@ func (calculator *clusterCalculator) Result(clusterNum int, data []interface{}) 
 	// 初始化
 	if clusterNum <= 0 {
 		return nil, errors.New("the amount of clusters should be at least 1")
+	} else if clusterNum > len(data) {
+		return nil, errors.New("the amount of clusters shouldn't be larger than the amount of data")
 	} else {
 		calculator.clusterNum = clusterNum
 	}
@@ -42,18 +44,28 @@ func (calculator *clusterCalculator) Result(clusterNum int, data []interface{}) 
 
 /*initialization related*/
 func (calculator *clusterCalculator) initRefPoints(data []interface{}) {
-	// TODO:待改善，當k值接近len(data)時，容易選出一樣的基準點
-	// 用亂數選出基準點
+	// 初始化
 	rand.Seed(time.Now().UnixNano())
 	calculator.referencePoints = make([]*referencePoint, 0, calculator.clusterNum)
+	referencePointSet := make(map[interface{}]struct{})
 
 	for i := 0; i < calculator.clusterNum; i++ {
-		p := &referencePoint{
-			rawData:   data[rand.Intn(len(data))],
+		// 亂數
+		randNum1 := rand.Intn(len(data))
+		randNum2 := rand.Intn(len(data))
+
+		// 用亂數選出基準點 (且確保基準點不重複)
+		rawDataOfRef := calculator.meanFunction(data[randNum1], data[randNum2])
+		for _, ok := referencePointSet[rawDataOfRef]; ok; {
+			rawDataOfRef = calculator.meanFunction(data[randNum1], data[randNum2])
+		}
+
+		rp := &referencePoint{
+			rawData:   rawDataOfRef,
 			clusterID: i,
 		}
 
-		calculator.referencePoints = append(calculator.referencePoints, p)
+		calculator.referencePoints = append(calculator.referencePoints, rp)
 	}
 }
 
