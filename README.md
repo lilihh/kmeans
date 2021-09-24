@@ -16,16 +16,16 @@ To use kmeans, you have to
 
     * `Mean` function, which can give a mean result from a group of data.
 
-2. create a kmeans calculator by using `NewClusterCalculator(distanceFunc Distance, meanFunc Mean)`.
-3. call the method `Result(clusterNum int, data []interface{})` of the calculator with the parameters it asks, and you will derive the clusters.
+2. Create a kmeans calculator by using `NewClusterCalculator(distanceFunc Distance, meanFunc Mean)`.
+3. Call the method `Result(clusterNum int, data []interface{})` of the calculator with the parameters it asks, and you will derive the clusters.
 
 ## Example
 ```go
 package main
 
 import (
-	"fmt"
-	"math"
+    "fmt"
+    "math"
 
     "github.com/lilihh/kmeans"
 )
