@@ -58,7 +58,7 @@ func main() {
     // Step2: Create a kmeans calculator
     calculator := kmeans.NewClustercalculator(distanceFunc, meanFunc)
 
-    // Step3: Derive the clusters
+    // Step3: Input data and derive the clusters
     clusterNum := 2
     data := []interface{}{
     	&oneDimData{value: 10},
