@@ -60,20 +60,20 @@ func main() {
 
     // Step3: Derive the clusters
     clusterNum := 2
-	data := []interface{}{
-		&oneDimData{value: 10},
-		&oneDimData{value: 15},
-		&oneDimData{value: 51},
-		&oneDimData{value: 11},
-		&oneDimData{value: 50},
-		&oneDimData{value: 12},
-		&oneDimData{value: 17},
-		&oneDimData{value: 60},
-		&oneDimData{value: 8},
-		&oneDimData{value: 40},
-		&oneDimData{value: 13},
-		&oneDimData{value: 9},
-	}
+    data := []interface{}{
+    	&oneDimData{value: 10},
+    	&oneDimData{value: 15},
+    	&oneDimData{value: 51},
+    	&oneDimData{value: 11},
+    	&oneDimData{value: 50},
+    	&oneDimData{value: 12},
+    	&oneDimData{value: 17},
+    	&oneDimData{value: 60},
+    	&oneDimData{value: 8},
+    	&oneDimData{value: 40},
+    	&oneDimData{value: 13},
+    	&oneDimData{value: 9},
+    }
 
     clusters := calculator.Result(clusterNum, data)
     printCluster(clusters)
