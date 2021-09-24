@@ -44,7 +44,7 @@ func TestOneDimensionalData(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{
-			name: "1D, k=2",
+			name: "one Dimension, 雙峰現象",
 			args: args{
 				clusterNum: 2,
 				data: []interface{}{
@@ -82,6 +82,37 @@ func TestOneDimensionalData(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "one Dimension, 平均分佈",
+			args: args{
+				clusterNum: 2,
+				data: []interface{}{
+					&oneDimData{value: 10},
+					&oneDimData{value: 1},
+					&oneDimData{value: 2},
+					&oneDimData{value: 7},
+					&oneDimData{value: 8},
+					&oneDimData{value: 4},
+					&oneDimData{value: 3},
+					&oneDimData{value: 9},
+				},
+			},
+			wantResult: [][]interface{}{
+				{
+					&oneDimData{value: 1},
+					&oneDimData{value: 2},
+					&oneDimData{value: 4},
+					&oneDimData{value: 3},
+				},
+				{
+					&oneDimData{value: 10},
+					&oneDimData{value: 7},
+					&oneDimData{value: 8},
+					&oneDimData{value: 9},
+				},
+			},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -103,28 +134,55 @@ func TestOneDimensionalData(t *testing.T) {
 }
 
 func isDeepEqual(c1, c2 [][]interface{}) bool {
-	// TODO:待改善，叢集順序不同時，仍可視為一樣
+	// Remark:當叢集順序不同時，仍可視為一樣
 
 	if len(c1) != len(c2) {
 		return false
 	}
 	clusterNum := len(c1)
 
-	for clusterIndex := 0; clusterIndex < clusterNum; clusterIndex++ {
-		if len(c1[clusterIndex]) != len(c2[clusterIndex]) {
-			return false
-		}
-		clusterLen := len(c1[clusterIndex])
+	// 把c2轉為Set
+	c2Set := make(map[int][]interface{})
+	for i := 0; i < clusterNum; i++ {
+		c2Set[i] = c2[i]
+	}
 
-		for memberIndex := 0; memberIndex < clusterLen; memberIndex++ {
-			m1 := c1[clusterIndex][memberIndex]
-			m2 := c1[clusterIndex][memberIndex]
-			if !reflect.DeepEqual(m1, m2) {
-				return false
+	// 針對c1的每個叢集，找遍c2Set看是否有一樣的
+	for c1Index := 0; c1Index < clusterNum; c1Index++ {
+		clusterOfC1 := c1[c1Index]
+		isThereAMatch := false
+
+		for c2Index, clusterOfC2 := range c2Set {
+			// 一旦找到c2Set中有一樣的，就將他拿出c2Set
+			if isSliceEqual(clusterOfC1, clusterOfC2) {
+				delete(c2Set, c2Index)
+				isThereAMatch = true
+				break
 			}
+		}
+
+		// 如果整個c2Set裡面都沒有，那就代表c1和c2一定不一樣
+		if !isThereAMatch {
+			return false
 		}
 	}
 
+	return true
+}
+
+func isSliceEqual(s1, s2 []interface{}) bool {
+	if len(s1) != len(s2) {
+		return false
+	}
+	length := len(s1)
+
+	for i := 0; i < length; i++ {
+		m1 := s1[i]
+		m2 := s2[i]
+		if !reflect.DeepEqual(m1, m2) {
+			return false
+		}
+	}
 	return true
 }
 
